@@ -61,7 +61,7 @@ def download_image(url):
         print(f'已下载并保存文件: {save_path}')
     else:
         print(f'无法下载文件: {url}')
-    time.sleep(1)
+    time.sleep(0.7)
 
 # 创建多个线程并发下载图片
 threads = []

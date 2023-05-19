@@ -7,6 +7,7 @@ import os
 import time
 import json
 from collections import OrderedDict
+import threading
 
 import requests
 import urllib3
@@ -44,7 +45,7 @@ def save_image(js0n_get):
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
 
-    for url in images_list:
+    def download_image(url):
         response = requests.get(url, verify=False, headers=headers)
         if response.status_code == 200:
             # 从URL中提取文件名
@@ -59,8 +60,20 @@ def save_image(js0n_get):
             print(f'已下载并保存文件: {save_path}')
         else:
             print(f'无法下载文件: {url}')
-        time.sleep(1)
+        time.sleep(0.7)
 
+    # 创建多线程并发下载
+    threads = []
+    for url in images_list:
+        thread = threading.Thread(target=download_image, args=(url,))
+        thread.start()
+        threads.append(thread)
+
+    # 等待所有线程完成
+    for thread in threads:
+        thread.join()
+
+    print('多线程下载结束.')
 
 if __name__ == '__main__':
     result = get_info(begin_post_id)
